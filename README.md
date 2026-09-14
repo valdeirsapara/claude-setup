@@ -42,8 +42,30 @@ O `install.sh`:
 1. Instala o Claude Code se `claude` não estiver no PATH (installer nativo, com
    fallback para `npm`). Se já estiver, não faz nada.
 2. Copia `statusline.sh` para `~/.claude/statusline.sh` (`chmod +x`).
-3. Mescla o bloco `statusLine` no `~/.claude/settings.json` **preservando** as
-   demais chaves. Só grava o arquivo quando o conteúdo muda.
+3. Mescla os blocos `statusLine` e `attribution` no `~/.claude/settings.json`
+   **preservando** as demais chaves. Só grava o arquivo quando o conteúdo muda.
+
+## Sem atribuição do Claude em commits e PRs
+
+O instalador aplica, de forma global (vale em qualquer projeto):
+
+```json
+"attribution": {
+  "commit": "",
+  "pr": "",
+  "sessionUrl": false
+}
+```
+
+| Chave | Efeito |
+|-------|--------|
+| `commit: ""` | Remove o `Co-Authored-By` das mensagens de commit |
+| `pr: ""` | Remove o "🤖 Generated with Claude Code" da descrição dos PRs |
+| `sessionUrl: false` | Remove o `Claude-Session` com o link da sessão |
+
+É configuração do próprio Claude Code (não uma skill), então é aplicada sempre,
+sem depender do modelo seguir instruções. Para desfazer, apague o bloco do
+`~/.claude/settings.json` (rodar o instalador de novo o recoloca).
 
 ## Atualizar
 

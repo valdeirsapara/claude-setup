@@ -77,7 +77,7 @@ install_statusline_script() {
   fi
 }
 
-# --- 3. Mesclar o bloco statusLine no settings.json (idempotente) --------
+# --- 3. Mesclar statusLine e attribution no settings.json (idempotente) --
 merge_settings() {
   [ -f "$SETTINGS" ] || { mkdir -p "$CLAUDE_DIR"; printf '{}\n' > "$SETTINGS"; }
   local py; py="$(pick_python)"
@@ -96,19 +96,31 @@ except (FileNotFoundError, ValueError, json.JSONDecodeError):
     cfg = {}
 
 desired = {
-    "type": "command",
-    "command": os.environ["STATUSLINE_CMD"],
-    "refreshInterval": int(os.environ["REFRESH_INTERVAL"]),
+    "statusLine": {
+        "type": "command",
+        "command": os.environ["STATUSLINE_CMD"],
+        "refreshInterval": int(os.environ["REFRESH_INTERVAL"]),
+    },
+    # Sem Co-Authored-By nos commits, sem "Generated with Claude Code" nos PRs
+    # e sem o link da sessão.
+    "attribution": {
+        "commit": "",
+        "pr": "",
+        "sessionUrl": False,
+    },
 }
 
-if cfg.get("statusLine") == desired:
+changed = [key for key, value in desired.items() if cfg.get(key) != value]
+
+if not changed:
     print("settings.json já está atualizado — nada a fazer.")
 else:
-    cfg["statusLine"] = desired
+    for key in changed:
+        cfg[key] = desired[key]
     with open(path, "w") as fh:
         json.dump(cfg, fh, indent=2, ensure_ascii=False)
         fh.write("\n")
-    print("settings.json: bloco statusLine aplicado.")
+    print("settings.json: blocos aplicados: " + ", ".join(changed) + ".")
 PY
 }
 
