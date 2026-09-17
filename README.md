@@ -7,16 +7,21 @@ CLI e injeta uma **status line personalizada** em qualquer máquina, de forma
 ## Status line
 
 ```
-[Sonnet 5] | 📁 meu-app | $0.42 | ⏱️  12m 34s | 5h: 24% (reseta em 2h 34m)
+[Sonnet 5] | 📁 meu-app | 🌿 main* | $0.42 | ⏱️  12m 34s | 5h: 24% (reseta em 2h 34m)
 ```
 
 | Campo | Origem (JSON do Claude Code) |
 |-------|------------------------------|
 | Nome do modelo | `model.display_name` |
 | Diretório atual | `workspace.current_dir` (só o nome da pasta) |
+| Branch do git | `git rev-parse --abbrev-ref HEAD` no diretório atual |
 | Custo da sessão | `cost.total_cost_usd` |
 | Duração | `cost.total_duration_ms` |
 | Limite de 5h + reset | `rate_limits.five_hour.used_percentage` / `resets_at` |
+
+> A branch só aparece quando o diretório atual é um repositório git. Em
+> *detached HEAD* mostra o hash curto, e um `*` indica que há alterações não
+> commitadas.
 
 > O trecho de limite só aparece em contas Claude.ai (Pro/Max) e após a primeira
 > resposta da API. Em contas com API key ele é omitido automaticamente.
